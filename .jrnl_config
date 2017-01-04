@@ -1,0 +1,14 @@
+{
+  "default_hour": 8, 
+  "timeformat": "%a %d-%m-%Y %H:%M", 
+  "linewrap": 150, 
+  "encrypt": false, 
+  "editor": "vim", 
+  "default_minute": 0, 
+  "highlight": true, 
+  "journals": {
+    "default": "/Users/wvdhaute/Google Drive/Journal/journal.txt",
+    "work": "/Users/wvdhaute/Google Drive/Journal/work.txt"
+  }, 
+  "tagsymbols": "@"
+}
