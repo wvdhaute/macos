@@ -1,0 +1,246 @@
+###################
+# General purpose #
+###################
+
+urlencode() {
+    echo "$1" | perl -MURI::Escape -ne 'chomp;print uri_escape($_),"\n"'
+}
+findjava() {
+    find . -name "*.java" -exec grep $1 {} \; -print
+}
+findhtml() {
+    find . -name "*.html" -exec grep $1 {} \; -print
+}
+
+########
+# Pass #
+########
+alias pass_personal='~/Scripts/pass-repo ~/.password-store'
+
+##############
+# Soundboard #
+##############
+alias sbrs='osascript -e "set volume 3" ; afplay ~/Soundboard/rimshot.mp3'
+alias sbst='osascript -e "set volume 3" ; afplay ~/Soundboard/sadtrombone.mp3'
+alias sbhh='osascript -e "set volume 3" ; afplay ~/Soundboard/hahanelson.mp3'
+alias sbze='osascript -e "set volume 3" ; afplay ~/Soundboard/zever.mp3'
+
+##########
+# Docker #
+##########
+export DOCKER_HOST=tcp://192.168.59.103:2376
+export DOCKER_CERT_PATH=/Users/wvdhaute/.boot2docker/certs/boot2docker-vm
+export DOCKER_TLS_VERIFY=1
+
+#############
+# GPG Agent #
+#############
+eval $(gpg-agent --daemon)
+if [ -f "${HOME}/.gpg-agent-info" ]
+then
+    . "${HOME}/.gpg-agent-info"
+    export GPG_AGENT_INFO
+fi
+
+########
+# jenv #
+#######
+export PATH="$HOME/.jenv/bin:$PATH"
+#eval "$(jenv init -)"
+
+########
+# Java #
+########
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.8)
+
+#########
+# Xcode #
+#########
+export DEVELOPER_DIR="/Applications/XCode.app/Contents/Developer"
+alias symbolicate="/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKit.framework/Versions/A/Resources/symbolicatecrash -v"
+alias simulator='open /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone\ Simulator.app'
+
+##############
+# Smartcards #
+##############
+# for GPShell
+#export DYLD_LIBRARY_PATH=/opt/local/lib
+#export PATH=${PATH}:${HOME}/Smartcard/pcsc-tools/pcsc-tools-1.4.20
+
+##########
+# Amazon #
+##########
+export AWS_CONFIG_FILE=${HOME}/.aws/config
+#export PATH=${PATH}:/usr/local/share/python
+export LC_CTYPE=en_US.UTF-8
+export LANG=en_US.UTF-8
+
+#export AMAZON=${HOME}/Amazon
+
+#export AWS_CREDENTIAL_FILE=${AMAZON}/aws-credentials
+#export EC2_PRIVATE_KEY=${HOME}/.ssh/aws.key
+#export EC2_CERT=${HOME}/.ssh/aws.crt
+
+#export EC2_REGION=eu-west-1
+
+#export AWS_IAM_HOME=${AMAZON}/iam
+#export EC2_AMITOOL_HOME=${AMAZON}/ec2/ec2-ami-tools-1.4.0.7
+#export EC2_HOME=${AMAZON}/ec2/ec2-api-tools-1.5.4.0
+#export AWS_AUTO_SCALING_HOME=${AMAZON}/as/AutoScaling-1.0.49.1
+#export AWS_RDS_HOME=${AMAZON}/rds
+#export AWS_HOME=${AMAZON}/aws-timkay
+
+#export PATH=$AWS_IAM_HOME/bin:${EC2_HOME}/bin:${AWS_AUTO_SCALING_HOME}/bin:${AWS_RDS_HOME}/bin:${AWS_HOME}:${PATH}
+
+#######
+# PHP #
+#######
+export PATH=${PATH}:${HOME}/pear/bin
+
+###########
+# Android #
+###########
+export ANDROID_HOME=${HOME}/Android/android-sdk-macosx
+export PATH=${PATH}:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools
+launchctl setenv ANDROID_HOME /Users/wvdhaute/Android/android-sdk-macosx
+
+alias android-capture="/Applications/Genymotion.app/Contents/MacOS/tools/adb shell screencap -p | perl -pe 's/\x0D\x0A/\x0A/g'" 
+
+#######
+# OOo #
+#######
+export XMLSECURITY_TRACE=1
+
+#########
+# Maven #
+#########
+alias mvn305=${HOME}/maven/3.0.5/bin/mvn
+alias mvn208=${HOME}/maven/2.0.8/bin/mvn
+alias mvn_compile="mvn clean install -Dmaven.test.skip=true -o"
+alias mci="mvn clean install -o"
+
+#########
+# Mysql #
+#########
+opendb() {
+    (( $# == 1)) || { emit -r "Expected one paramter: [dbase]."; return; }
+    mysql -u $1 -p"$1" $1
+}
+
+############
+# Tomcat #
+##########
+
+#export TOMCAT_HOME=${HOME}/Tomcat/apache-tomcat-7.0.62
+export TOMCAT_HOME=${HOME}/Tomcat/apache-tomcat-8.5.8
+
+alias start_tomcat="cd ${TOMCAT_HOME} ; ./bin/startup.sh ; tail -f logs/catalina.out"
+
+stop_tomcat() {
+    setopt localoptions rmstarsilent
+    cd ${TOMCAT_HOME}
+    ./bin/shutdown.sh
+    \rm -Rf work/Catalina/*
+    sleep 2
+    pkill -9 -fl tomcat
+}
+
+copy_tomcat() {
+    setopt localoptions rmstarsilent
+    (( $# == 2)) || { emit -r "Expected 2 paramters: [war file] [context path]."; return; }
+    cd ${TOMCAT_HOME}/webapps
+    export WAR=`basename $1`
+    rm -Rf $2
+    if [ ! -d available ]
+    then
+        mkdir available
+    fi
+    cp $1 available
+    if [ -f $2.war ]
+    then
+        rm $2.war
+    fi
+    ln -s available/$WAR $2.war
+    cd ..
+}
+
+#################
+# Miscelanneous #
+#################
+export M2_REPO=${HOME}/.m2/repository
+export MAVEN_OPTS="-Xms512m -Xmx1024m -Djava.net.preferIPv4Stack=true"
+export ANT_OPTS="-Xmx1024m"
+export WSIMPORT_OPTS="-Xmx1024m"
+export SVN_EDITOR=vim
+export DOH=${HOME}/Documents/Info/doh.txt
+export PATH=/usr/local/bin:/usr/local/maven2/bin/${HOME}/scripts:$PATH
+export PATH=/usr/local/texlive/2012/bin/universal-darwin:$PATH
+export PATH=${HOME}/Scripts:$PATH
+export PATH=${HOME}/bin:$PATH
+
+alias doh="more ${DOH}"
+alias preview="qlmanage -p $file"
+alias webscarab="java -jar ~/Applications/webscarab/webscarab.jar"
+alias portecle="java -jar /Applications/Portecle.app/Contents/Resources/Java/portecle.jar"
+alias public_ip="dig TXT +short o-o.myaddr.l.google.com @ns1.google.com | awk -F'\"' '{ print $2}'"
+
+########
+# brew #
+########
+alias brewski='brew update && brew upgrade --all && brew upgrade brew-cask; brew cleanup; brew cask cleanup; brew doctor'
+
+##############
+# Subversion #
+##############
+alias svn-add-all-new-files='svn st|grep ^?|sed s/?//|xargs svn add $1'
+#alias svn-rm-all-removed-files='svn st | grep ! | awk '{print $2}' | xargs svn rm $1'
+
+#######
+# Git #
+#######
+export PATH=/usr/local/git/bin:$PATH
+
+alias gbr="git branch"
+alias gst="git status"
+alias gdf="git diff"
+alias glo="git log"
+alias gps="git push"
+alias gpl="git pull"
+alias gco="git checkout"
+alias gci="git commit"
+alias gad="git add"
+alias gs="git svn"
+
+#########
+# MySQL #
+#########
+#export PATH=/opt/local/lib/mysql5/bin:$PATH
+
+##########
+# Python #
+##########
+#export PATH=${HOME}/Python/Django-1.1/django/bin:$PATH
+
+###########
+# Node.js #
+###########
+export PATH=${HOME}/node_modules/.bin:$PATH
+
+###########
+# Journal #
+###########
+alias jw="jrnl work"
+alias jws="jrnl work --short"
+
+##################
+# Custom Scripts #
+##################
+export PATH=$HOME/Scripts:$HOME/.bin:$PATH
+
+[ "$BASH_VERSION" ] && . "$HOME/.bashrc"
+
+#########
+# OTHER #
+#########
+source ~/.profile.linkid
+source ~/.profile.counterfort

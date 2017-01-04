@@ -1,0 +1,193 @@
+# Local ZSH config
+
+#-----------------------#
+# Aliasses: System      #
+#-----------------------#
+
+alias grep="grep -I --color=auto"
+
+#-------------------------#
+# ALIASSES - NETWORKING   #
+#-------------------------#
+alias n="netstat -np tcp"
+alias mtr="mtr -t"
+alias nmap="nmap -v -v -T5"
+alias nmapp="nmap -P0 -A --osscan_limit"
+alias pktstat="sudo pktstat -tBFT"
+
+#-----------------------------#
+# SHELL - HISTORY             #
+#-----------------------------#
+HISTSIZE=-1
+HISTCONTROL=ignoreboth
+HISTFILESIZE=-1
+
+###################
+# General purpose #
+###################
+export P_LINKID=${HOME}/Projects/linkid
+urlencode() {
+    echo "$1" | perl -MURI::Escape -ne 'chomp;print uri_escape($_),"\n"'
+}
+findjava() {
+    find . -name "*.java" -exec grep $1 {} \; -print
+}
+findhtml() {
+    find . -name "*.html" -exec grep $1 {} \; -print
+}
+
+##############
+# Soundboard #
+##############
+alias sbrs='osascript -e "set volume 3" ; afplay ~/Soundboard/rimshot.mp3'
+alias sbst='osascript -e "set volume 3" ; afplay ~/Soundboard/sadtrombone.mp3'
+alias sbhh='osascript -e "set volume 3" ; afplay ~/Soundboard/hahanelson.mp3'
+alias sbze='osascript -e "set volume 3" ; afplay ~/Soundboard/zever.mp3'
+
+#############
+# GPG Agent #
+#############
+eval $(gpg-agent --daemon)
+if [ -f "${HOME}/.gpg-agent-info" ]
+then
+    . "${HOME}/.gpg-agent-info"
+    export GPG_AGENT_INFO
+fi
+
+########
+# Java #
+########
+export JAVA_HOME=$(/usr/libexec/java_home -v 1.7)
+
+#########
+# Xcode #
+#########
+export DEVELOPER_DIR="/Applications/XCode.app/Contents/Developer"
+alias symbolicate="/Applications/Xcode.app/Contents/Developer/Platforms/iPhoneOS.platform/Developer/Library/PrivateFrameworks/DTDeviceKit.framework/Versions/A/Resources/symbolicatecrash -v"
+alias simulator='open /Applications/Xcode.app/Contents/Developer/Platforms/iPhoneSimulator.platform/Developer/Applications/iPhone\ Simulator.app'
+
+##########
+# Amazon #
+##########
+export AWS_CONFIG_FILE=${HOME}/.aws/config
+#export PATH=${PATH}:/usr/local/share/python
+export LC_CTYPE=en_US.UTF-8
+
+#export AMAZON=${HOME}/Amazon
+
+#export AWS_CREDENTIAL_FILE=${AMAZON}/aws-credentials
+#export EC2_PRIVATE_KEY=${HOME}/.ssh/aws.key
+#export EC2_CERT=${HOME}/.ssh/aws.crt
+
+#export EC2_REGION=eu-west-1
+
+#export AWS_IAM_HOME=${AMAZON}/iam
+#export EC2_AMITOOL_HOME=${AMAZON}/ec2/ec2-ami-tools-1.4.0.7
+#export EC2_HOME=${AMAZON}/ec2/ec2-api-tools-1.5.4.0
+#export AWS_AUTO_SCALING_HOME=${AMAZON}/as/AutoScaling-1.0.49.1
+#export AWS_RDS_HOME=${AMAZON}/rds
+#export AWS_HOME=${AMAZON}/aws-timkay
+
+#export PATH=$AWS_IAM_HOME/bin:${EC2_HOME}/bin:${AWS_AUTO_SCALING_HOME}/bin:${AWS_RDS_HOME}/bin:${AWS_HOME}:${PATH}
+
+#######
+# PHP #
+#######
+export PATH=${PATH}:${HOME}/pear/bin
+
+###########
+# Android #
+###########
+export ANDROID_HOME=${HOME}/Android/android-sdk-macosx
+export PATH=${PATH}:${ANDROID_HOME}/platform-tools:${ANDROID_HOME}/tools
+launchctl setenv ANDROID_HOME /Users/wvdhaute/Android/android-sdk-macosx
+
+#######
+# OOo #
+#######
+export XMLSECURITY_TRACE=1
+
+#########
+# Maven #
+#########
+alias mvn305=/usr/local/Cellar/maven/3.0.5/bin/mvn
+mvn-fad() {
+    (( $# == 1 ))   || { emit -r "Expected one parameters; [id]."; return; }
+    cd ${HOME}/Projects/linkid/link-incoming-dependencies
+    git pull
+    mvn305 -U deploy:find-and-deploy -Did=$1
+}
+
+#########
+# Mysql #
+#########
+opendb() {
+    (( $# == 1)) || { emit -r "Expected one paramter: [dbase]."; return; }
+    mysql -u $1 -p"$1" $1
+}
+
+
+############
+# Aliasses #
+############
+alias mvn_compile="mvn clean install -Dmaven.test.skip=true -o"
+alias mci="mvn clean install -o"
+alias wdid="grep \"Wim Vandenhaute\" ~/.weechat/logs/irc.bnc.\#safeonline.git.weechatlog  | less"
+
+#################
+# Miscelanneous #
+#################
+export M2_REPO=${HOME}/.m2/repository
+export ANT_OPTS="-Xmx1024m"
+export WSIMPORT_OPTS="-Xmx1024m"
+export SVN_EDITOR=vim
+export DOH=${HOME}/Documents/Info/doh.txt
+export PATH=/usr/local/bin:/usr/local/maven2/bin:$PATH
+export PATH=/usr/local/texlive/2012/bin/universal-darwin:$PATH
+export PATH=${HOME}/Scripts:$PATH
+export PATH=${HOME}/bin:$PATH
+
+alias doh="more ${DOH}"
+alias preview="qlmanage -p $file"
+alias webscarab="java -jar ~/Applications/webscarab/webscarab.jar"
+alias portecle="java -jar /Applications/Portecle.app/Contents/Resources/Java/portecle.jar"
+
+##############
+# Subversion #
+##############
+alias svn-add-all-new-files='svn st|grep ^?|sed s/?//|xargs svn add $1'
+#alias svn-rm-all-removed-files='svn st | grep ! | awk '{print $2}' | xargs svn rm $1'
+
+#######
+# Git #
+#######
+export PATH=/usr/local/git/bin:$PATH
+
+alias gbr="git branch"
+alias gst="git status"
+alias gdf="git diff"
+alias glo="git log"
+alias gps="git push"
+alias gpl="git pull"
+alias gco="git checkout"
+alias gci="git commit"
+alias gad="git add"
+alias gs="git svn"
+
+###########
+# Node.js #
+###########
+export PATH=${HOME}/node_modules/.bin:$PATH
+
+##################
+# Custom Scripts #
+##################
+export PATH=$HOME/Scripts:$HOME/.bin:$PATH
+
+
+#########
+# Shell #
+#########
+export LANG=en_US
+
+source ~/.profile

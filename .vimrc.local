@@ -1,0 +1,157 @@
+set nocompatible
+set fileencodings=utf-8,latin1,ucs-bom
+
+set ignorecase
+set smartcase
+
+set tabstop=4
+set expandtab
+set shiftwidth=4
+
+set nobackup writebackup
+set viminfo+='1000,\"500,:100,/100,h
+set formatoptions=tcroqn
+set mouse=vic
+set textwidth=0
+set laststatus=2
+set scrolloff=2
+set display=lastline
+set showcmd
+set modeline
+set modelines=2
+
+set incsearch
+set hlsearch
+
+set number
+"set ruler
+
+set pastetoggle=<F12>
+set incsearch hlsearch ignorecase
+
+"set cursorline
+set nocursorcolumn
+
+map q           :q<Enter>
+map O3P       "ay
+map O3Q       "by
+map O3R       "cy
+map O3S       "dy
+map <F1>        "aP
+map <F2>        "bP
+map <F3>        "cP
+map <F4>        "dP
+map <Up>      ddkP
+map <Down>    ddjP
+map <Right>   :next<Cr>
+map <Left>    :prev<Cr>
+imap <Right>  <Esc>:next<Cr>
+imap <Left>   <Esc>:prev<Cr>
+map O2C       :wnext<Cr>
+map O2D       :wprev<Cr>
+imap O2C      <Esc>:wnext<Cr>
+imap O2D      <Esc>:wprev<Cr>
+
+map <F10>       :colorscheme blackbeauty<Enter>:hi CursorLine cterm=bold ctermbg=4<Enter>:hi CursorColumn cterm=bold<Enter>:set nonu<Enter>
+map <F11>       :colorscheme wombat<Enter>:hi CursorLine cterm=bold ctermbg=4<Enter>:hi CursorColumn cterm=bold<Enter>:set nu<Enter>
+
+map <F12>       :%!tidy -config ~/.tidyrc
+setlocal makeprg=tidy\ -config\ ~/.tidyrc\ -quiet\ -errors\ % 
+setlocal errorformat=line\ %l\ column\ %v\ -\ %m
+set timeoutlen=0
+
+"colorscheme darkdot
+colorscheme desert
+"colorscheme golden
+
+set statusline=%F%m%r%h%w\ \#\ lend:%{&ff},\ type:%y,\ line:%l/%L\ (%p%%),\ col:%v,\ asc:%03.3b,\ hex:%02.2B
+au InsertEnter * hi StatusLine term=reverse ctermbg=1 gui=undercurl guisp=Magenta
+au InsertLeave * hi StatusLine term=reverse ctermfg=0 ctermbg=3 gui=bold,reverse
+hi StatusLine term=reverse ctermfg=0 ctermbg=3 gui=bold,reverse
+"hi Normal ctermbg=black
+hi CursorLine cterm=none ctermbg=blue
+"au BufReadCmd   *.?ar		call zip#Browse(expand("<amatch>"))
+augroup filetypedetect
+    au! BufRead,BufNewFile *.xhtml     setfiletype xhtml
+    au! BufRead,BufNewFile *.html      setfiletype html
+    au! BufRead,BufNewFile *.xml       setfiletype xml
+    au! BufRead,BufNewFile *.xhtml~    setfiletype xhtml
+    au! BufRead,BufNewFile *.html~     setfiletype html
+    au! BufRead,BufNewFile *.xml~      setfiletype xml
+augroup END
+
+let g:miniBufExplMapCTabSwitchBufs = 1
+
+nnoremap <C-H> :Hexmode<CR>
+inoremap <C-H> <Esc>:Hexmode<CR>
+vnoremap <C-H> :<C-U>Hexmode<CR>
+ 
+command -bar Hexmode call ToggleHex()
+function ToggleHex()
+  " hex mode should be considered a read-only operation
+  " save values for modified and read-only for restoration later,
+  " and clear the read-only flag for now
+  let l:modified=&mod
+  let l:oldreadonly=&readonly
+  let &readonly=0
+  let l:oldmodifiable=&modifiable
+  let &modifiable=1
+  if !exists("b:editHex") || !b:editHex
+    " save old options
+    let b:oldft=&ft
+    let b:oldbin=&bin
+    " set new options
+    setlocal binary " make sure it overrides any textwidth, etc.
+    let &ft="xxd"
+    " set status
+    let b:editHex=1
+    " switch to hex editor
+    %!xxd
+  else
+    " restore old options
+    let &ft=b:oldft
+    if !b:oldbin
+      setlocal nobinary
+    endif
+    " set status
+    let b:editHex=0
+    " return to normal editing
+    %!xxd -r
+  endif
+  " restore values for modified and read only state
+  let &mod=l:modified
+  let &readonly=l:oldreadonly
+  let &modifiable=l:oldmodifiable
+endfunction
+
+" autocmds to automatically enter hex mode and handle file writes properly
+if has("autocmd")
+  " vim -b : edit binary using xxd-format!
+  augroup Binary
+    au!
+    au BufReadPre *.bin,*.hex setlocal binary
+    au BufReadPost *
+          \ if &binary | Hexmode | endif
+    au BufWritePre *
+          \ if exists("b:editHex") && b:editHex && &binary |
+          \  let oldro=&ro | let &ro=0 |
+          \  let oldma=&ma | let &ma=1 |
+          \  exe "%!xxd -r" |
+          \  let &ma=oldma | let &ro=oldro |
+          \  unlet oldma | unlet oldro |
+          \ endif
+    au BufWritePost *
+          \ if exists("b:editHex") && b:editHex && &binary |
+          \  let oldro=&ro | let &ro=0 |
+          \  let oldma=&ma | let &ma=1 |
+          \  exe "%!xxd" |
+          \  exe "set nomod" |
+          \  let &ma=oldma | let &ro=oldro |
+          \  unlet oldma | unlet oldro |
+          \ endif
+  augroup END
+endif
+
+" fix for not having eol at end of file
+au BufWritePre * :set binary | set noeol
+au BufWritePost * :set nobinary | set eol
