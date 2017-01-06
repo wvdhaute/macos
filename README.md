@@ -1,0 +1,3 @@
+# macos
+
+Some configuration files
