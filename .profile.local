@@ -203,7 +203,7 @@ export PATH=/usr/local/git/bin:$PATH
 alias gbr="git branch"
 alias gst="git status"
 alias gdf="git diff"
-alias glo="git log"
+alias glo="git log --color --graph --pretty=format:'%Cred%h%Creset -%C(yellow)%d%Creset %s %Cgreen(%cr) %C(bold blue)<%an>%Creset' --abbrev-commit"
 alias gps="git push"
 alias gpl="git pull"
 alias gco="git checkout"
