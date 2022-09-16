@@ -1,0 +1,21 @@
+##############
+# NETWORKING #
+##############
+alias n="netstat -np tcp"
+alias mtr="mtr -t"
+alias nmap="nmap -v -v -T5"
+alias nmapp="nmap -P0 -A --osscan_limit"
+alias pktstat="sudo pktstat -tBFT"
+
+########
+# brew #
+########
+alias brewski='brew update && brew upgrade --all && brew upgrade brew-cask; brew cleanup; brew cask cleanup; brew doctor'
+
+
+
+#######
+# k8s # 
+#######
+alias kubectl="minikube kubectl --"
+alias get_all_pods="minikube kubectl -- get po -A"
